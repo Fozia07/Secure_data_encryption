@@ -1,6 +1,5 @@
 # Secure Data Encryption Program using streamlit
 
-
 import streamlit as st
 import hashlib
 import json
@@ -19,10 +18,10 @@ LOCKOUT_DURATION = 60
 # section login detail
 
 if "authenticated_user" not in st.session_state:
-    st.session_state.authenticated_user = None
+    st.session_state.authenticated_user =None
 
-if "failed_attempts" not in st.session_state:
-    st.session_state.failed_attempts = 0
+if "failed_attempt" not in st.session_state:
+    st.session_state.failed_attempt = 0
 
 if "Lockout_time" not in st.session_state:
     st.session_state.Lockout_time = 0
@@ -57,7 +56,7 @@ def encrypt_text(text , key):
 def decrypt_text(encrypt_text ,key):
    try:
       cipher=Fernet(generate_key(key))
-      return cipher.decrypt(encrypt_text.encode()).decode()
+      return cipher.decrypt(encrypt_text.enecode()).decode()
    except:
     return  None
    
@@ -101,13 +100,24 @@ if choice == "Register":
 elif choice == "Login":
    st.subheader("user login")
 
-   if time.time() < st.session_state.lockout_time:
+   if time.time() < st.session_state.lockout_time():
       remaining =int(st.session_state.lockout_time -time())
       st.warning(f"to many failed attempt ,please try after {remaining} second")
       st.stop()
 
-   username = st.text_input("Enter username")
-   password = st.text_input("Enter password", type="password")
+   # Login Page
+elif choice == "Login":
+    st.subheader("User Login")
+
+    # Check lockout timer
+    if time.time() < st.session_state.lockout_time:
+        remaining = int(st.session_state.lockout_time - time.time())
+        st.warning(f"⚠️ Too many failed attempts. Please try again in {remaining} seconds.")
+        st.stop()
+
+    # Input fields (placed outside the button check)
+    username = st.text_input("Enter username")
+    password = st.text_input("Enter password", type="password")
 
     # Login button
     if st.button("Login"):
@@ -124,6 +134,7 @@ elif choice == "Login":
                 st.session_state.lockout_time = time.time() + LOCKOUT_DURATION
                 st.error("⛔ Too many failed attempts. Locked for 60 seconds.")
                 st.stop()
+
  # store data 
 elif choice == "Store_data":
    if not st.session_state.authenticated_user :
