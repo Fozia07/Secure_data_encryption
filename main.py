@@ -19,10 +19,10 @@ LOCKOUT_DURATION = 60
 # section login detail
 
 if "authenticated_user" not in st.session_state:
-    st.session_state.authenticated_user
+    st.session_state.authenticated_user = None
 
-if "failed_attempt" not in st.session_state:
-    st.session_state.failed_attempt = 0
+if "failed_attempts" not in st.session_state:
+    st.session_state.failed_attempts = 0
 
 if "Lockout_time" not in st.session_state:
     st.session_state.Lockout_time = 0
@@ -51,13 +51,13 @@ def hash_password(password):
 # cryptography fernet use
 
 def encrypt_text(text , key):
-   cipher = fernet(generate_key(key))
+   cipher = Fernet(generate_key(key))
    return cipher.encrypt(text.encode()).decode()
 
 def decrypt_text(encrypt_text ,key):
    try:
-      cipher=fernet(generate_key(key))
-      return cipher.decrypt(encrypt_text.enecode()).decode
+      cipher=Fernet(generate_key(key))
+      return cipher.decrypt(encrypt_text.encode()).decode()
    except:
     return  None
    
@@ -101,14 +101,14 @@ if choice == "Register":
 elif choice == "Login":
    st.subheader("user login")
 
-   if time.time() < st.session_state.lockout_time():
+   if time.time() < st.session_state.lockout_time:
       remaining =int(st.session_state.lockout_time -time())
       st.warning(f"to many failed attempt ,please try after {remaining} second")
       st.stop()
 
    if st.buton("Login"):
-        username=st.text_input("Enter username")
-        password=st.text_input("Enter password ",type="password")
+     username=st.text_input("Enter username")
+     password=st.text_input("Enter password ",type="password")
         if username in store_data and store_data[username]["password"] == hash_password(password):
           st.session_state.authenticated_user = username
           st.session_state.failed_attempts = 0
@@ -118,7 +118,7 @@ elif choice == "Login":
            remaining = 3 - st.session_state.failed_attempts 
            st.error(f"❌Invalid credential , remaining attempy {remaining}")
 
-           if st.session_state.failed_attempt >= 3:
+           if st.session_state.failed_attempts >= 3:
               st.session_state.lockout_time = time.time() + LOCKOUT_DURATION
               st.error("❌Too many faile attempt ,locked for 60 second")
               st.stop()
