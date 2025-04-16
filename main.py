@@ -106,23 +106,24 @@ elif choice == "Login":
       st.warning(f"to many failed attempt ,please try after {remaining} second")
       st.stop()
 
-   if st.buton("Login"):
-     username=st.text_input("Enter username")
-     password=st.text_input("Enter password ",type="password")
+   username = st.text_input("Enter username")
+   password = st.text_input("Enter password", type="password")
+
+    # Login button
+    if st.button("Login"):
         if username in store_data and store_data[username]["password"] == hash_password(password):
-          st.session_state.authenticated_user = username
-          st.session_state.failed_attempts = 0
-          st.success(f"✅welcome {username}")
+            st.session_state.authenticated_user = username
+            st.session_state.failed_attempts = 0
+            st.success(f"✅ Welcome {username}")
         else:
-           st.session_state.failed_attempts += 1
-           remaining = 3 - st.session_state.failed_attempts 
-           st.error(f"❌Invalid credential , remaining attempy {remaining}")
+            st.session_state.failed_attempts += 1
+            remaining = 3 - st.session_state.failed_attempts
+            st.error(f"❌ Invalid credentials. Remaining attempts: {remaining}")
 
-           if st.session_state.failed_attempts >= 3:
-              st.session_state.lockout_time = time.time() + LOCKOUT_DURATION
-              st.error("❌Too many faile attempt ,locked for 60 second")
-              st.stop()
-
+            if st.session_state.failed_attempts >= 3:
+                st.session_state.lockout_time = time.time() + LOCKOUT_DURATION
+                st.error("⛔ Too many failed attempts. Locked for 60 seconds.")
+                st.stop()
  # store data 
 elif choice == "Store_data":
    if not st.session_state.authenticated_user :
