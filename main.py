@@ -20,11 +20,11 @@ LOCKOUT_DURATION = 60
 if "authenticated_user" not in st.session_state:
     st.session_state.authenticated_user =None
 
-if "failed_attempt" not in st.session_state:
-    st.session_state.failed_attempt = 0
+if "failed_attempts" not in st.session_state:
+    st.session_state.failed_attempts = 0
 
-if "Lockout_time" not in st.session_state:
-    st.session_state.Lockout_time = 0
+if "lockout_time" not in st.session_state:
+    st.session_state.lockout_time = 0
 
 
 def load_data():
