@@ -3,11 +3,11 @@
 import streamlit as st
 import hashlib
 import json
-import os 
+import os
 import time
-from cryptography.fernet import Fernet
 from base64 import urlsafe_b64encode
 from hashlib import pbkdf2_hmac
+from cryptography.fernet import Fernet
 
 ### data information from user
 
@@ -56,7 +56,7 @@ def encrypt_text(text , key):
 def decrypt_text(encrypt_text ,key):
    try:
       cipher=Fernet(generate_key(key))
-      return cipher.decrypt(encrypt_text.enecode()).decode()
+      return cipher.decrypt(encrypt_text.encode()).decode()
    except:
     return  None
    
@@ -96,14 +96,6 @@ if choice == "Register":
        st.success("✅user sucessfully register")
    else:
      st.error("❌Both feilds are require")     
-
-elif choice == "Login":
-   st.subheader("user login")
-
-   if time.time() < st.session_state.lockout_time():
-      remaining =int(st.session_state.lockout_time -time())
-      st.warning(f"to many failed attempt ,please try after {remaining} second")
-      st.stop()
 
    # Login Page
 elif choice == "Login":
